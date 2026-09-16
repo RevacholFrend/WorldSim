@@ -89,6 +89,43 @@ namespace WorldSim.Core.World
             return stats;
         }
 
+        public WorldStats GetStats()
+        {
+            int water = 0, mountain = 0, tundra = 0, taiga = 0, grassland = 0, forest = 0, swamp = 0, desert = 0, saavanna = 0, tropicalRainforest = 0;
+            long tempSum = 0, humiditySum = 0;
+
+            for (int x = 0; x < Width; x++)
+                for (int y = 0; y < Height; y++)
+                {
+                    ref var cell = ref _cells[x, y];
+                    switch (cell.Terrain)
+                    {
+                        case TerrainType.Water: water++; break;
+                        case TerrainType.Mountain: mountain++; break;
+                        case TerrainType.Tundra: tundra++; break;
+                        case TerrainType.Taiga: taiga++; break;
+                        case TerrainType.Grassland: grassland++; break;
+                        case TerrainType.Forest: forest++; break;
+                        case TerrainType.Swamp: swamp++; break;
+                        case TerrainType.Desert: desert++; break;
+                        case TerrainType.Savanna: saavanna++; break;
+                        case TerrainType.TropicalRainforest: tropicalRainforest++; break;
+                    }
+                    tempSum += cell.Temperature;
+                    humiditySum += cell.Humidity;
+                }
+            
+
+            int total = Width * Height;
+            return new WorldStats(water, mountain, tundra, taiga, grassland, forest, swamp, desert, saavanna, tropicalRainforest,
+                    (int)(tempSum/total),(int)(humiditySum/total));    
+
+           
+        }
+
+        public record WorldStats(int Water, int Mountain, int Tundra, int Taiga, int Grassland,
+            int  Forest, int Swamp, int Desert, int Savanna, int TropicalRainforest, int AvgTemp, int AvgHumidity);
+
     }
 }
     

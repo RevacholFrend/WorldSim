@@ -7,8 +7,8 @@ System.Console.OutputEncoding = System.Text.Encoding.UTF8;
 System.Console.CursorVisible = false;
 
 const int worldWidth = 130;
-const int worldHeight = 30;
-const int seed = 50064;
+const int worldHeight = 27;
+const int seed = 12;
 
 var world = new World(worldWidth, worldHeight,seed);
 world.Generate();
@@ -20,8 +20,10 @@ int tickDelayMs = 1000 / ticksPerSecond;
 
 while(true)
 {
+    var stats = world.GetStats();
     world.Tick();
     render.Render(world);
+    
     Thread.Sleep(tickDelayMs);
 }
 

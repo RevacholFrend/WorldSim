@@ -62,6 +62,7 @@ public class ConsoleRenderer : IWorldRenderer
 
         // Легенда и статистика — тоже в буфер.
         AppendLegend(world);
+        AppendStats(world);
     }
 
     /// <summary>
@@ -99,6 +100,16 @@ public class ConsoleRenderer : IWorldRenderer
             string line = $"{biome,-20} {percent,3}%{Environment.NewLine}";
             _frameBuffer.Add((ConsoleColor.Gray, line));
         }
+    }
+
+    private void AppendStats(World world)
+    {
+        var stats = world.GetStats();
+        _frameBuffer.Add((ConsoleColor.Gray, Environment.NewLine));
+        _frameBuffer.Add((ConsoleColor.Gray, $"Water: {stats.Water} | Mountain: {stats.Mountain} | Tundra: {stats.Tundra}" +
+        $" | Taiga: {stats.Taiga} | Grassland: {stats.Grassland} | Forest: {stats.Forest}" +
+        $" | Swamp: {stats.Swamp} | Desert: {stats.Desert} | Savanna: {stats.Savanna} | TropicalRainforest: {stats.TropicalRainforest}"));
+        _frameBuffer.Add((ConsoleColor.Gray, $"Avg Temp: {stats.AvgTemp} | Avg Humidity: {stats.AvgHumidity}"));
     }
 
     private static (char symbol, ConsoleColor color) GetVisual(TerrainType terrain) => terrain switch
