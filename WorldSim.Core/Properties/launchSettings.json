@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "WorldSim.Core": {
+      "commandName": "Project"
+    },
+    "WorldSim.Concole": {
+      "commandName": "Project",
+      "workingDirectory": "D:\\Users\\seymo\\source\\repos\\WorldSim\\WorldSim.Console"
+    }
+  }
+}
