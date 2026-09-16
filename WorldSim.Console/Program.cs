@@ -1,10 +1,36 @@
 ﻿using System;
 using System.Text;
+using WorldSim.Console.Rendering;
+using WorldSim.Core.World;
+
+System.Console.OutputEncoding = System.Text.Encoding.UTF8;
+System.Console.CursorVisible = false;
+
+const int worldWidth = 130;
+const int worldHeight = 30;
+const int seed = 50064;
+
+var world = new World(worldWidth, worldHeight,seed);
+world.Generate();
+
+IWorldRenderer render = new ConsoleRenderer();
+
+const int ticksPerSecond = 2;
+int tickDelayMs = 1000 / ticksPerSecond;
+
+while(true)
+{
+    world.Tick();
+    render.Render(world);
+    Thread.Sleep(tickDelayMs);
+}
 
 namespace WorldSim.Core.World
 {
-   public class Program
+
+   /*public class Program
     {
+
         static void Main(string[] args)
         {
             int seed = 5552465;
@@ -41,5 +67,5 @@ namespace WorldSim.Core.World
             }
 
         }
-    }
+    }*/
 }

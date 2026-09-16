@@ -7,7 +7,11 @@ namespace WorldSim.Core.World
     public struct Cell
     {
         public TerrainType Terrain;
-        public int Temperature, Humidity, Resources;
+        public int Temperature;
+        public int Humidity;
+        public int Resources;
+        public int Elevation;
+
 
     }
 }

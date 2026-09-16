@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Udun.FastNoiseLite" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\WorldSim.Core\WorldSim.Core.csproj" />
   </ItemGroup>
 
