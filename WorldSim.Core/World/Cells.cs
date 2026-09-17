@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WorldSim.Core.World
 {
-    public struct Cell
+    public struct Cells
     {
         public TerrainType Terrain;
         public int Temperature;

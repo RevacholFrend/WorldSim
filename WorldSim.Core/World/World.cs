@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Text;
 
 namespace WorldSim.Core.World
 {
@@ -10,17 +8,20 @@ namespace WorldSim.Core.World
         public int Width { get; }
         public int Height { get; }
         public int Seed { get; }
-        private readonly Cell[,] _cells;
+        public int Tick { get; private set; }
+        private readonly Cells[,] _cells;
 
         public World(int width, int height, int seed)
         {
             Width = width;
             Height = height;
             Seed = seed;
-            _cells = new Cell[width, height];
+            Tick = 0;
+            _cells = new Cells[width, height];
+            
         }
 
-        public ref Cell GetCell(int x, int y) => ref _cells[x, y];
+        public ref Cells GetCell(int x, int y) => ref _cells[x, y];
 
         public void Generate()
         {
@@ -54,7 +55,7 @@ namespace WorldSim.Core.World
             }
         }*/
 
-        public void Tick()
+        public void Advance()
         {
             for (int x = 0; x < Width; x++)
             {
@@ -73,6 +74,8 @@ namespace WorldSim.Core.World
                     cell.Temperature = Math.Clamp(cell.Temperature + Random.Shared.Next(-1, 2), -0, 50);
                 }
             }
+            Tick++;
+            
         }
 
         public Dictionary<TerrainType, int> GetBiomeStats()
@@ -121,6 +124,63 @@ namespace WorldSim.Core.World
                     (int)(tempSum/total),(int)(humiditySum/total));    
 
            
+        }
+
+        public WorldSnapshot ToSnapshot()
+        {
+            var snapshot = new WorldSnapshot
+            {
+                FormatVersion = 1,
+                Whidth = Width,
+                Height = Height,
+                Seed = Seed,
+                Tick = Tick,
+                Cells = new CellsSnapshot[Width * Height]
+            };
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    ref var cell = ref _cells[x,y];
+                    snapshot.Cells[y * Width + x] = new CellsSnapshot
+                    {
+                        Terrain = cell.Terrain,
+                        Elevation = cell.Elevation,
+                        Humidity = cell.Humidity,
+                        Temperature = cell.Temperature,
+                        Resurces = cell.Resources
+                    };
+                }
+            }
+            return snapshot;
+        }
+        public static World FromSnapshot(WorldSnapshot snapshot)
+        {
+            if (snapshot.FormatVersion != 1)
+                throw new InvalidDataException($"Неподдерживаемая версия: {snapshot.FormatVersion}");
+
+            
+            if (snapshot.Cells.Length != snapshot.Whidth * snapshot.Height)
+                throw new InvalidDataException("Количество ячеек не совпадает");
+
+            var world = new World(snapshot.Whidth, snapshot.Height,snapshot.Seed);
+            world.Tick = snapshot.Tick;
+
+            for (int y = 0;y < world.Height;y++)
+            {
+                for (int x = 0;x < world.Width;x++)
+                {
+                    var cellSnap = snapshot.Cells[y*world.Width + x];
+                    ref var cell = ref world._cells[x,y];
+                    cell.Terrain = cellSnap.Terrain;
+                    cell.Elevation = cellSnap.Elevation;
+                    cell.Humidity = cellSnap.Humidity;
+                    cell.Temperature = cellSnap.Temperature;
+                    cell.Resources = cellSnap.Resurces;
+                }
+            }
+
+            return world;
         }
 
         public record WorldStats(int Water, int Mountain, int Tundra, int Taiga, int Grassland,
